@@ -4,7 +4,6 @@ package com.spring.bookstore.entity;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import java.time.LocalDate;
 
 @Entity

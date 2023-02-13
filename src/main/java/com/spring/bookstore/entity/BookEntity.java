@@ -1,6 +1,5 @@
 package com.spring.bookstore.entity;
-import com.spring.bookstore.entity.BookDetailsEntity;
-import com.spring.bookstore.entity.CategoryEntity;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -20,7 +19,6 @@ public class BookEntity {
     @NotBlank(message = "Please insert Author")
     @Column (name = "author")
     private String author;
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn (name = "categoryId")
@@ -72,17 +70,6 @@ public class BookEntity {
 
     public void setBookDetails(BookDetailsEntity bookDetails) {
         this.bookDetails = bookDetails;
-    }
-
-    @Override
-    public String toString() {
-        return "BookEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", author='" + author + '\'' +
-                ", category=" + category +
-                ", bookDetails=" + bookDetails +
-                '}';
     }
 }
 

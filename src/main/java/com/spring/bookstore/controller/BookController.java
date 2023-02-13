@@ -1,9 +1,12 @@
 package com.spring.bookstore.controller;
 
+
 import com.spring.bookstore.entity.BookEntity;
 import com.spring.bookstore.entity.CategoryEntity;
 import com.spring.bookstore.repository.BookRepository;
 import com.spring.bookstore.repository.CategoryRepository;
+import com.spring.bookstore.service.BookService;
+import com.spring.bookstore.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -27,12 +30,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class BookController {
 
         @Autowired
-        BookRepository bookRepository;
+        BookService bookService;
         @Autowired
-        CategoryRepository categoryRepository;
+        CategoryService categoryService;
         @RequestMapping(method = GET)
         public String showBooks(Model model) {
-            List<BookEntity> bookList = (List<BookEntity>) bookRepository.findAll();
+            List<BookEntity> bookList = (List<BookEntity>) bookService.findAll();
             model.addAttribute("bookList", bookList);
             return "home";
         }
@@ -46,9 +49,9 @@ public class BookController {
         public String search(@RequestParam("searchInput") String searchInput, Model model) {
             List<BookEntity> resultList;
             if (searchInput.isEmpty()) {
-                resultList = (List<BookEntity>) bookRepository.findAll();
+                resultList = (List<BookEntity>) bookService.findAll();
             } else {
-                resultList = bookRepository.findByNameContainingOrAuthorContaining(searchInput, searchInput);
+                resultList = bookService.findByNameContainingOrAuthorContaining(searchInput, searchInput);
             }
             model.addAttribute("bookList",resultList);
             return "home";
@@ -73,11 +76,12 @@ public class BookController {
             if(result.hasErrors() || book.getCategory().getId() == 0) {
                 setCategoryDropDownList(model);
                 if (book.getCategory().getId() == 0) {
+                    setCategoryDropDownList(model);
                     model.addAttribute("message", "Please choose category");
                 }
                 return "book";
         }
-            bookRepository.save(book);
+            bookService.save(book);
             return "redirect:/";
         }
 
@@ -86,9 +90,9 @@ public class BookController {
             model.addAttribute("msg", "Update book information");
             model.addAttribute("type", "Update Book");
             model.addAttribute("action", "updateBook");
-            model.addAttribute("book", bookRepository.getByID(id));
+            model.addAttribute("book", bookService.getByID(id));
             setCategoryDropDownList(model);
-            if (bookRepository.getByID(id) != null) {
+            if (bookService.getByID(id) != null) {
                 return "book";
             }else {
                 model.addAttribute("id", id);
@@ -105,14 +109,14 @@ public class BookController {
                 }
                 return "book";
             }
-            bookRepository.save(book);
+            bookService.save(book);
             return "redirect:/";
         }
 
         @RequestMapping(value = "/delete/{id}", method = GET)
         public String deleteBook(@PathVariable int id) {
 
-            bookRepository.deleteById(id);
+            bookService.deleteById(id);
             return "redirect:/";
         }
 
@@ -123,7 +127,7 @@ public class BookController {
             binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
         }
         private void setCategoryDropDownList(Model model) {
-            List<CategoryEntity> cateList = (List<CategoryEntity>) categoryRepository.findAll();
+            List<CategoryEntity> cateList = (List<CategoryEntity>) categoryService.findAll();
             if (!cateList.isEmpty()) {
                 Map<Integer, String> cateMap = new LinkedHashMap<>();
                 for (CategoryEntity categoryEntity: cateList) {
